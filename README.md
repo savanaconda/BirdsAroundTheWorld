@@ -1,6 +1,6 @@
 # Birds-Model
 
-Creating a model to predict species survival with data from Cornell's eBird database
+Creating a model to predict species movement with data from Cornell's eBird database
 
 Accessed csv file of eBird Observation Dataset from Cornell Lab of Ornithology
 on Global Biodiversity Information Facility (GBIF) website:
