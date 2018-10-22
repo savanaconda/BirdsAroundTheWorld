@@ -79,7 +79,12 @@ def plot_sightings_over_time(dates_data,dates_cols, bin_freq, num_ticks):
 	# Creates binned date entries
 	min_val = dates_data['SightingDate'].iloc[0]
 	max_val = dates_data['SightingDate'].iloc[-1]
-	bins_dt = pd.date_range(start=min_val,end=max_val, freq=bin_freq)
+
+	# Round up for bin period to make sure to get final bin for range
+	bin_period = np.ceil((max_val - min_val)/bin_freq)
+	bins_dt = pd.date_range(start=min_val,end=max_val, periods=bin_period).strftime('%Y-%m-%d')
+	bins_dt = pd.DatetimeIndex(bins_dt)
+
 	bins_str = bins_dt.astype(str).values
 	labels = ['({}, {}]'.format(bins_str[i-1], bins_str[i]) for i in range(1, len(bins_str))]
 	binned = pd.DataFrame()
@@ -112,7 +117,27 @@ def plot_sightings_over_time(dates_data,dates_cols, bin_freq, num_ticks):
 	ax.set_title('Number of Sightings Over Time')
 	ax.set_xlabel('Date ranges')
 	ax.set_ylabel('Number of Sightings')
-	
+
+def track_species_overtime(data, speciesname):
+	speciesdata = data.loc[data['Species'] == speciesname]
+
+	num_sightings = len(speciesdata)
+
+	# Include world map as background
+	img = plt.imread(".\\Images\\worldmap.png")
+	fig, ax = plt.subplots()
+	ax.imshow(img, extent=[-180, 180, -90, 90])
+
+	# Add actual data to plot
+	ax.scatter(speciesdata['Longitude'], speciesdata['Latitude'], c=speciesdata['AbsoluteDate'], marker = 'x', cmap='YlOrRd')
+
+	# Add graph features
+	ax.set_title('Sightings of ' + speciesname + ' over time')
+	ax.set_xlabel('Longitude')
+	ax.set_ylabel('Latitude')
+
+	ax.annotate('More red = more recent \nMore yellow = less recent', xy=(0, 0), xytext=(40, -160))
+	ax.annotate('Number of Sightings = ' + str(num_sightings), xy=(0, 0), xytext=(50, 140))
 
 
 def main():
@@ -137,7 +162,12 @@ def main():
 	plot_sightings_over_time(dates_data,dates_cols, bin_freq, num_ticks)
 
 
+	print(data.columns.values)
+	print(data.index.values)
 
+	# Where is birb going?
+	speciesname = 'Setophaga magnolia'
+	track_species_overtime(data, speciesname)
 
 	plt.show()
 
