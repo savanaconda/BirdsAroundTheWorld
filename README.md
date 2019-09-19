@@ -1,4 +1,4 @@
-# Birds-Model
+# Birds Around the World
 
 Creating a model to predict species movement with data from Cornell's eBird database
 
